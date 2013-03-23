@@ -6,17 +6,23 @@ var skype = require('./libs/skype')
 
 'fga'.split(' ').forEach(function(name) {
     var task = require('./tasks/' + name);
-    console.assert(task.command);
     console.assert(task.execute);
-    tasks[task.command] = task.execute;
+    console.assert(task.info);
+    
+    for(var name in task.info) {
+        var info = task.info[name];
+        console.assert(info.command);
+        tasks[info.command] = task;
+    }
 });
 
 var commandReg = /!(.*?)\s*(?:\s+(.*))?$/;
 skype.on('message', function(chat, message) {
     var parts = message.match(commandReg);
     if(!(parts && parts[1] in tasks)) return;
+    var params = parts[2];
 
-    tasks[parts[1]](parts[2], function(err, answer) {
+    tasks[parts[1]].execute(params, function(err, answer) {
         if(err) console.error(err);
         skype.send(chat, answer);
     });

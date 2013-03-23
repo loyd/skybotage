@@ -1,0 +1,17 @@
+{
+	"name"        : "skybotage",
+	"description" : "Modular Skype bot",
+	"version"     : "0.1.0",
+	"keywords"    : ["Skype", "bot", "dbus"],
+
+	"engines" : {
+		"node" : ">=0.7.0"
+	},
+
+	"dependencies" : {},
+	"devDependencies" : {},
+
+	"scripts" : {
+		"install" : "prepare_dbus.sh"
+	}
+}
