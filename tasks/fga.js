@@ -1,47 +1,38 @@
-// ———————————————————————————————————————
+var http = require('http')
+  , url = 'http://fucking-great-advice.ru/';
 
-exports.info = [
-    {
-        lang : 'ru',
-        command : 'обс',
-        signature : '!обс [<тэг>]',
-        description : 'Возвращает случайный совет'
-    },
-
-    {
-        lang : 'en',
-        command : 'fga',
-        signature : '!fga [<tag>]',
-        description : 'Returns random advice'
+exports.info = {
+    ru : {
+          command : 'обс'
+        , signature : '!обс [<тэг>]'
+        , description : 'Возвращает случайный совет'
     }
-];
 
-// ———————————————————————————————————————
-
-http = require('http');
-
-// ———————————————————————————————————————
-
-url = 'http://fucking-great-advice.ru/';
-
-// ———————————————————————————————————————
+    , en : {
+          command : 'fga'
+        , signature : '!fga [<tag>]'
+        , description : 'Returns random advice'
+    }
+}
 
 exports.execute = function(body, callback) {
-    if (body.length)
-        method = 'api/random_by_tag/'+body;
-    else
-        method = 'api/random';
+    var method = body ? 'api/random_by_tag/' + body : 'api/random'
+      , data = '';
 
-    http.get(url+method, function (response) {
+    http.get(url + method, function(response) {
         response.on('data', function(chunk) {
-            try
-                result = JSON.parse(chunk).text;
-            catch (error)
-                callback(error);
+            data += chunk;
+        });
 
-            callback(null, advice.text);
+        response.on('end', function() {
+            try {
+                var result = JSON.parse(data).text;
+            } catch(error) {
+                callback(error);
+            }
+
+            callback(null, result);
         });
     });
 };
 
-// ———————————————————————————————————————
