@@ -18,7 +18,7 @@ exports.info = {
 
 exports.execute = function(data, callback) {
     var body = data.body
-      , method = body ? 'api/random_by_tag/' + body : 'api/random'
+      , method = body ? 'api/random_by_tag/' + encodeURIComponent(body) : 'api/random'
       , data = '';
 
     http.get(url + method, function(response) {
@@ -30,7 +30,8 @@ exports.execute = function(data, callback) {
             try {
                 var result = mnem.decode(JSON.parse(data).text);
             } catch(error) {
-                callback(error);
+                return;
+                // return callback(error);
             }
 
             callback(null, result);
