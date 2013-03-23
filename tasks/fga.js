@@ -15,8 +15,9 @@ exports.info = {
     }
 }
 
-exports.execute = function(body, callback) {
-    var method = body ? 'api/random_by_tag/' + body : 'api/random'
+exports.execute = function(data, callback) {
+    var body = data.body
+      , method = body ? 'api/random_by_tag/' + body : 'api/random'
       , data = '';
 
     http.get(url + method, function(response) {

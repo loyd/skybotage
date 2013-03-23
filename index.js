@@ -21,11 +21,14 @@ fs.readdir('./tasks', function(err, files) {
     });
 });
 
-var commandReg = /!(.*?)\s*(?:\s+(.*))?$/;
+var commandReg = /^!(.*?)\s*(?:\s+(.*))?$/;
 skype.on('message', function(chat, message) {
     var parts = message.match(commandReg);
     if(!(parts && parts[1] in tasks)) return;
-    var params = parts[2];
+    var params = {
+          command : parts[1]
+        , body : parts[2]
+    };
 
     tasks[parts[1]].execute(params, function(err, answer) {
         if(err) console.error(err);
