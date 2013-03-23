@@ -1,5 +1,6 @@
 var http = require('http')
-  , url = 'http://fucking-great-advice.ru/';
+  , mnem = require('../libs/mnemonic')
+  , url  = 'http://fucking-great-advice.ru/';
 
 exports.info = {
     ru : {
@@ -27,7 +28,7 @@ exports.execute = function(data, callback) {
 
         response.on('end', function() {
             try {
-                var result = JSON.parse(data).text;
+                var result = mnem.decode(JSON.parse(data).text);
             } catch(error) {
                 callback(error);
             }
