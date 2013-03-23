@@ -8,6 +8,7 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
  
 #define DBUS_API_SUBJECT_TO_CHANGE
 #include <dbus/dbus.h>
@@ -16,7 +17,7 @@ DBusConnection *connection;
  
 /* Iterate through DBus messages and print the string components */
 static void print_messages(DBusMessageIter *iter) {
-    const char *str;
+    const int *str;
     do {
         int type = dbus_message_iter_get_arg_type(iter);
         if(type == DBUS_TYPE_STRING) {
@@ -98,6 +99,8 @@ input_handler(GIOChannel *source, GIOCondition condition, gpointer data) {
 }
  
 int main(int argc, char **argv) {
+    setlocale(LC_ALL, "en_US.utf8");
+
     DBusObjectPathVTable vtable;
     DBusError error;
     
