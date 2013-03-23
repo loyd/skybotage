@@ -17,7 +17,7 @@ DBusConnection *connection;
  
 /* Iterate through DBus messages and print the string components */
 static void print_messages(DBusMessageIter *iter) {
-    const int *str;
+    const char *str;
     do {
         int type = dbus_message_iter_get_arg_type(iter);
         if(type == DBUS_TYPE_STRING) {
