@@ -2,18 +2,23 @@
 "use strict";
 
 var skype = require('./libs/skype')
+  , fs    = require('fs')
   , tasks = {};
 
-'fga'.split(' ').forEach(function(name) {
-    var task = require('./tasks/' + name);
-    console.assert(task.execute);
-    console.assert(task.info);
+fs.readdir('./tasks', function(err, files) {
+    if(err) throw err;
     
-    for(var name in task.info) {
-        var info = task.info[name];
-        console.assert(info.command);
-        tasks[info.command] = task;
-    }
+    files.forEach(function(filename) {
+        var task = require('./tasks/' + filename);
+        console.assert(task.execute);
+        console.assert(task.info);
+        
+        for(var infoMember in task.info) {
+            var info = task.info[infoMember];
+            console.assert(info.command);
+            tasks[info.command] = task;
+        }
+    });
 });
 
 var commandReg = /!(.*?)\s*(?:\s+(.*))?$/;
