@@ -8,7 +8,10 @@
 		"node" : ">=0.7.0"
 	},
 
-	"dependencies" : {},
+	"dependencies" : {
+		"iconv-lite" : "*"
+	},
+	
 	"devDependencies" : {},
 
 	"scripts" : {
