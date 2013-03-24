@@ -1,5 +1,8 @@
 "use strict";
 
+var botName  = 'skybotage'
+  , protocol = 8
+
 var spawn = require('child_process').spawn
   , path  = require('path')
   , dbus  = spawn(path.join(__dirname, '.dbus_mediator'))
@@ -11,7 +14,7 @@ var tmpData = {};
 
 var regs = {
       inbox : /^CHATMESSAGE (\d+) STATUS (RECEIVED|SENDING)$/
-    , info  : /^CHATMESSAGE (\d+) (\w+) (.*?)$/
+    , info  : /^CHATMESSAGE (\d+) (\w+) ([\s\S]*?)$/
 };
 
 dbus.stdout.on('data', function(body) {
@@ -30,8 +33,7 @@ dbus.stdout.on('data', function(body) {
         var message = tmpData[messageId] = tmpData[messageId] || {};
         message[res[2].toLowerCase()] = res[3];
 
-        if(res[2] === 'BODY') {
-            console.assert('chatname' in message);
+        if('body' in message && 'chatname' in message) {
             delete tmpData[messageId];
             skype.emit('message', message.chatname, message.body);
         }
@@ -46,13 +48,14 @@ dbus.on('close', function(code) {
     console.log('Code: %d', code);
 });
 
-invoke('NAME skybotage');
-invoke('PROTOCOL 8');
+invoke('NAME %s', botName);
+invoke('PROTOCOL %d', protocol);
 
+var newLineReg = /\n/g;
 function notify(body) {
     var time = new Date().toTimeString().slice(0, 8);
     // Align multiline
-    body = body.replace(/\n/g, '\n         | ');
+    body = body.replace(newLineReg, '\n         | ');
     console.log('%s | %s', time, body);
 }
 
@@ -63,5 +66,7 @@ function invoke(cmd /*, ...*/) {
 
 skype.send = function(chat, message) {
     console.assert(chat && message);
-    invoke('CHATMESSAGE %s %s', chat, message);
+    var lines = message.split('\n');
+    for(var i = 0, len = lines.length; i < len; ++i)
+        invoke('CHATMESSAGE %s %s', chat, lines[i]);
 }
