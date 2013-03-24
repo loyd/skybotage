@@ -13,7 +13,7 @@ var skype = module.exports = new Emitter;
 var tmpData = {};
 
 var regs = {
-      inbox : /^CHATMESSAGE (\d+) STATUS (RECEIVED|SENDING)$/
+      inbox : /^CHATMESSAGE (\d+) STATUS (RECEIVED|SENT)$/
     , info  : /^CHATMESSAGE (\d+) (\w+) ([\s\S]*?)$/
 };
 
