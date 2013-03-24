@@ -1,9 +1,10 @@
 var REPEAT_TIMEOUT = 300
-  , BASH_IM_URL  = 'http://bash.im/forweb/?u'
-  , BASH_ORG_URL = 'http://www.bash.org/?random1';
+  , BASH_IM_URL  = 'http://bash.im/random'
+  , BASH_ORG_URL = 'http://www.bash.org/?random';
 
-var http = require('http')
-  , mnem = require('../libs/mnemonic');
+var http  = require('http')
+  , mnem  = require('../libs/mnemonic')
+  , iconv = require('iconv-lite');
 
 exports.info = {
     ru : {
@@ -19,36 +20,39 @@ exports.info = {
     }
 }
 
-var fromBashIm = (function(url) {
-    var newLineReg = /<' \+ 'br( \/)?>/g, prev;
-    return function request(input, callback) {
+var fromBashIm = (function(store, url) {
+    var newLineReg = /<br\s*\/?>\s*/g
+      , contentReg = /<div class="text">([\s\S]*?)<\/div>/g;
+
+    return function(input, callback) {
+        if(store.length) return callback(null, store.pop());
+
         http.get(url, function(response) {
+            response.setEncoding('binary');
+
             var data = '';
             response.on('data', function(chunk) {
                 data += chunk;
             });
 
             response.on('end', function() {
-                if(data === prev)
-                    return setTimeout(function() {
-                        request(input, callback);
-                    }, REPEAT_TIMEOUT);
-                
-                prev = data;
+                var buf = new Buffer(data, 'binary');
+                data = iconv.decode(buf, 'win1251').trim();
 
-                var start = data.indexOf('>', data.indexOf('b_q_t')) + 1;
-                var end   = data.indexOf('<\' + \'/div>', start);
+                while(match = contentReg.exec(data))
+                    store.push(mnem.decode(match[1]
+                        .replace(newLineReg, '\n')
+                    ));
 
-                var content = data.slice(start, end).trim().replace(newLineReg, '\n');
-                callback(null, mnem.decode(content));
+                callback(null, store.pop());
             });
         });
     };
-})(BASH_IM_URL);
+})([], BASH_IM_URL);
 
 var fromBashOrg = (function(store, url) {
     var newLineReg = /<br \/>\s*/g
-      , contentReg = /<p class="qt">([\s\S]*?)<\/p>/g
+      , contentReg = /<p class="qt">([\s\S]*?)<\/p>/g;
 
     return function(input, callback) {
         if(store.length) return callback(null, store.pop());
