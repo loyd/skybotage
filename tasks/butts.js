@@ -1,17 +1,17 @@
 var http = require('http')
-  , urlNoise = 'http://api.oboobs.ru/noise/'
-  , urlImage = 'http://media.oboobs.ru/';
+  , urlNoise = 'http://api.obutts.ru/noise/'
+  , urlImage = 'http://media.obutts.ru/';
 
 exports.info = {
     ru : {
-          command : 'сиськи'
-        , signature : '!сиськи'
+          command : 'попки'
+        , signature : '!попки'
         , description : 'Возвращает ссылку на картинку'
     }
 
     , en : {
-          command : 'boobs'
-        , signature : '!boobs'
+          command : 'butts'
+        , signature : '!butts'
         , description : 'Returns picture link'
     }
 }
