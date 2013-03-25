@@ -16,6 +16,7 @@ exports.info = {
     }
 }
 
+var sym151 = /\&#151;/g;
 exports.execute = function(data, callback) {
     var body = data.body
       , method = body ? 'api/random_by_tag/' + encodeURIComponent(body) : 'api/random'
@@ -28,7 +29,8 @@ exports.execute = function(data, callback) {
 
         response.on('end', function() {
             try {
-                var result = mnem.decode(JSON.parse(data).text);
+                var text   = JSON.parse(data).text.replace(sym151, '&#8212;')
+                  , result = mnem.decode(text);
             } catch(error) {
                 return;
                 // return callback(error);
@@ -38,4 +40,3 @@ exports.execute = function(data, callback) {
         });
     });
 };
-
