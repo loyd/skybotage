@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 "use strict";
 
+// Global settings
+require('console-trace')({ always : true });
+console.assert = require('better-assert');
+
 var skype = require('./libs/skype')
   , fs    = require('fs')
   , tasks = {};

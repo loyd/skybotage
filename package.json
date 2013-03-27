@@ -9,7 +9,9 @@
 	},
 
 	"dependencies" : {
-		"iconv-lite" : "*"
+		"iconv-lite" : "*",
+		"better-assert" : "~1",
+		"console-trace" : "git://github.com/numbcoder/console-trace.git"
 	},
 	
 	"devDependencies" : {},
