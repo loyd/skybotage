@@ -24,8 +24,8 @@ var fromBashIm = (function(store, url) {
     var newLineReg = /<br\s*\/?>\s*/g
       , contentReg = /<div class="text">([\s\S]*?)<\/div>/g;
 
-    return function(input, callback) {
-        if(store.length) return callback(null, store.pop());
+    return function(input, answer) {
+        if(store.length) return answer(store.pop());
 
         http.get(url, function(response) {
             response.setEncoding('binary');
@@ -44,7 +44,7 @@ var fromBashIm = (function(store, url) {
                         .replace(newLineReg, '\n')
                     ));
 
-                callback(null, store.pop());
+                answer(store.pop());
             });
         });
     };
@@ -54,8 +54,8 @@ var fromBashOrg = (function(store, url) {
     var newLineReg = /<br \/>\s*/g
       , contentReg = /<p class="qt">([\s\S]*?)<\/p>/g;
 
-    return function(input, callback) {
-        if(store.length) return callback(null, store.pop());
+    return function(input, answer) {
+        if(store.length) return answer(store.pop());
 
         http.get(url, function(response) {
             var data = '';
@@ -69,16 +69,16 @@ var fromBashOrg = (function(store, url) {
                         .replace(newLineReg, '\n')
                     ));
 
-                callback(null, store.pop());
+                answer(store.pop());
             });
         });
     };
 })([], BASH_ORG_URL);
 
-exports.execute = function(input, callback) {
+exports.execute = function(input, answer) {
     var info = exports.info;
     switch(input.command) {
-        case info.ru.command : return fromBashIm(input, callback);
-        case info.en.command : return fromBashOrg(input, callback);
+        case info.ru.command : return fromBashIm(input, answer);
+        case info.en.command : return fromBashOrg(input, answer);
     }
 }

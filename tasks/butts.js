@@ -16,7 +16,7 @@ exports.info = {
     }
 }
 
-exports.execute = function(data, callback) {
+exports.execute = function(data, answer) {
     http.get(urlNoise, function(response) {
         var data = '';
         response.on('data', function(chunk) {
@@ -26,11 +26,9 @@ exports.execute = function(data, callback) {
         response.on('end', function() {
             try {
                 var result = JSON.parse(data)[0].preview;
-            } catch(error) {
-                callback(error);
-            }
+            } catch(error) {}
 
-            callback(null, urlImage + result);
+            answer(urlImage + result);
         });
     });
 };

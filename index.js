@@ -29,13 +29,12 @@ var commandReg = /^!(.*?)\s*(?:\s+(.*))?$/;
 skype.on('message', function(chat, message) {
     var parts = message.match(commandReg);
     if(!(parts && parts[1] in tasks)) return;
+    
     var params = {
           command : parts[1]
         , body : parts[2]
     };
 
-    tasks[parts[1]].execute(params, function(err, answer) {
-        if(err) console.error(err);
-        skype.send(chat, answer);
-    });
+    var answer = skype.send.bind(skype, chat);
+    tasks[parts[1]].execute(params, answer);
 });

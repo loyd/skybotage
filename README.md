@@ -30,10 +30,10 @@ exports.info = {
  * @param {Object} input
  * @param {String} input.body
  * @param {String} input.command
- * @param {Function} fire(err, message)
+ * @param {Function} answer(message)
  */
-exports.execute = function(input, fire) {
+exports.execute = function(input, answer) {
     // Your code here ...
-    // You can use `fire` many times
+    // You can use `answer` many times
 };
 ```

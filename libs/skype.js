@@ -53,10 +53,11 @@ invoke('PROTOCOL %d', protocol);
 
 var newLineReg = /\n/g;
 function notify(body) {
-    var time = new Date().toTimeString().slice(0, 8);
+    // var time = new Date().toTimeString().slice(0, 8);
     // Align multiline
-    body = body.replace(newLineReg, '\n         | ');
-    console.log('%s | %s', time, body);
+    // body = body.replace(newLineReg, '\n         | ');
+    // console.log('%s | %s', time, body);
+    console.log(body);
 }
 
 function invoke(cmd /*, ...*/) {

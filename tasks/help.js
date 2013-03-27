@@ -51,7 +51,7 @@ function generateHelp(lang, cmd) {
     }
 }
 
-exports.execute = function(input, callback) {
+exports.execute = function(input, answer) {
     var info = exports.info, lang;
 
     switch(input.command) {
@@ -60,5 +60,5 @@ exports.execute = function(input, callback) {
     }
 
     var help = generateHelp(lang, input.body);
-    if(help) help.forEach(callback.bind(null, null));
+    if(help) help.forEach(answer);
 };
