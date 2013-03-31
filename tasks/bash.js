@@ -1,8 +1,7 @@
-var REPEAT_TIMEOUT = 300
-  , BASH_IM_URL  = 'http://bash.im/random'
+var BASH_IM_URL  = 'http://bash.im/random'
   , BASH_ORG_URL = 'http://www.bash.org/?random';
 
-var http  = require('http')
+var request = require('request')
   , mnem  = require('../libs/mnemonic')
   , iconv = require('iconv-lite');
 
@@ -27,25 +26,17 @@ var fromBashIm = (function(store, url) {
     return function(input, answer) {
         if(store.length) return answer(store.pop());
 
-        http.get(url, function(response) {
-            response.setEncoding('binary');
+        request({ url : url, encoding : null }, function(err, res, body) {
+            if(err || res.statusCode !== 200)
+                console.error(err || 'Status code: ' + res.statusCode);
 
-            var data = '';
-            response.on('data', function(chunk) {
-                data += chunk;
-            });
+            var data = iconv.decode(body, 'win1251').trim();
+            while(match = contentReg.exec(data))
+                store.push(mnem.decode(match[1]
+                    .replace(newLineReg, '\n')
+                ));
 
-            response.on('end', function() {
-                var buf = new Buffer(data, 'binary');
-                data = iconv.decode(buf, 'win1251').trim();
-
-                while(match = contentReg.exec(data))
-                    store.push(mnem.decode(match[1]
-                        .replace(newLineReg, '\n')
-                    ));
-
-                answer(store.pop());
-            });
+            answer(store.pop());
         });
     };
 })([], BASH_IM_URL);
@@ -57,20 +48,16 @@ var fromBashOrg = (function(store, url) {
     return function(input, answer) {
         if(store.length) return answer(store.pop());
 
-        http.get(url, function(response) {
-            var data = '';
-            response.on('data', function(chunk) {
-                data += chunk;
-            });
+        request(url, function(err, res, body) {
+            if(err || res.statusCode !== 200)
+                console.error(err || 'Status code: ' + res.statusCode);
 
-            response.on('end', function() {
-                while(match = contentReg.exec(data))
-                    store.push(mnem.decode(match[1]
-                        .replace(newLineReg, '\n')
-                    ));
+            while(match = contentReg.exec(body))
+                store.push(mnem.decode(match[1]
+                    .replace(newLineReg, '\n')
+                ));
 
-                answer(store.pop());
-            });
+            answer(store.pop());
         });
     };
 })([], BASH_ORG_URL);

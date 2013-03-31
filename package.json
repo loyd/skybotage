@@ -10,6 +10,7 @@
 
 	"dependencies" : {
 		"iconv-lite" : "*",
+		"request" : "~2",
 		"better-assert" : "~1",
 		"console-trace" : "git://github.com/numbcoder/console-trace.git"
 	},

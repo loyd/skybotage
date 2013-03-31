@@ -1,4 +1,4 @@
-var http = require('http')
+var request = require('request')
   , mnem = require('../libs/mnemonic')
   , url  = 'http://fucking-great-advice.ru/';
 
@@ -19,23 +19,18 @@ exports.info = {
 var sym151 = /\&#151;/g;
 exports.execute = function(data, answer) {
     var body = data.body
-      , method = body ? 'api/random_by_tag/' + encodeURIComponent(body) : 'api/random'
-      , data = '';
+      , method = body ? 'api/random_by_tag/' + encodeURIComponent(body) : 'api/random';
 
-    http.get(url + method, function(response) {
-        response.on('data', function(chunk) {
-            data += chunk;
-        });
+    request({
+          url : url + method
+        , json : true
+    }, function(err, res, body) {
+        if(err || res.statusCode !== 200)
+            console.error(err || 'Status code: ' + res.statusCode);
 
-        response.on('end', function() {
-            try {
-                var text   = JSON.parse(data).text.replace(sym151, '&#8212;')
-                  , result = mnem.decode(text);
-            } catch(error) {
-                return;
-            }
+        var text   = body.text.replace(sym151, '&#8212;')
+          , result = mnem.decode(text);
 
-            answer(result);
-        });
+        answer(result);
     });
 };

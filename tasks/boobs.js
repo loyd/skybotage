@@ -1,4 +1,4 @@
-var http = require('http')
+var request  = require('request')
   , urlNoise = 'http://api.oboobs.ru/noise/'
   , urlImage = 'http://media.oboobs.ru/';
 
@@ -17,18 +17,11 @@ exports.info = {
 }
 
 exports.execute = function(data, answer) {
-    http.get(urlNoise, function(response) {
-        var data = '';
-        response.on('data', function(chunk) {
-            data += chunk;
-        });
+    request({ url : urlNoise, json : true }, function(err, res, body) {
+        if(err || res.statusCode !== 200)
+            console.error(err || 'Status code: ' + res.statusCode);
 
-        response.on('end', function() {
-            try {
-                var result = JSON.parse(data)[0].preview;
-            } catch(error) {}
-
-            answer(urlImage + result);
-        });
+        var result = body[0].preview;
+        answer(urlImage + result);
     });
 };
