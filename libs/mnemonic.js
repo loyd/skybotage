@@ -1,5 +1,8 @@
 /**
  * It's fork of {@link http://javascript.ru/node/10853}
+ * New:
+ *   - Improve performance of decoding
+ *   - Convert to CommonJS
  */
 
 var encoding = {
