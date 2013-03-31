@@ -1,23 +1,29 @@
 /**
  * It's fork of {@link http://konrad.familie-kieling.de/code/skype_dbus_client.c}
+ * New:
+ *   - support unicode
+ *   - format messages:
+ *     M<number of lines>
+ *     <multiline message>
  */
 
 #define REPLY_TIMEOUT -1
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
- 
+
 #define DBUS_API_SUBJECT_TO_CHANGE
 #include <dbus/dbus.h>
- 
+
 DBusConnection *connection;
- 
+
 /* Iterate through DBus messages and print the string components */
 static void print_messages(DBusMessageIter *iter) {
-    const char *str;
+    const gchar *str;
     do {
         int type = dbus_message_iter_get_arg_type(iter);
         if(type == DBUS_TYPE_STRING) {
@@ -44,7 +50,7 @@ notify_handler(DBusConnection *bus, DBusMessage *msg, void *user_data) {
 }
 
 /* Send a string to skype */
-void send_to_skype(char *msg) {
+void send_to_skype(gchar *msg) {
     DBusMessageIter iter;
     DBusError error;
     
@@ -64,7 +70,6 @@ void send_to_skype(char *msg) {
     
     if(dbus_error_is_set(&error)) {
         fprintf(stderr, "%s\n", error.message);
-        dbus_error_free(&error);
         exit(1);
     }
     
@@ -73,31 +78,46 @@ void send_to_skype(char *msg) {
      
     if(dbus_error_is_set(&error)) {
         fprintf(stderr, "%s\n", error.message);
-        dbus_error_free(&error);
         exit(1);
     }
 }
- 
+
 /* If the input is disconnected: exit the program */
 gboolean
 hangup_handler(GIOChannel *source, GIOCondition condition, gpointer data) {
     exit(0);
 }
- 
+
 /* Input waiting: read and forward to skype */
 gboolean
 input_handler(GIOChannel *source, GIOCondition condition, gpointer data) {
-    char *b;
+    GString *text = g_string_new("");
+
+    gint num_of_lines;
+    gchar *header;
+    g_io_channel_read_line(source, &header, NULL, NULL, NULL);
     
-    g_io_channel_read_line(source, &b, NULL, NULL, NULL);
-    if(b == NULL) exit(0);
-    
-    send_to_skype(b);
-    g_free(b);
+    int is_start_message = sscanf(header, "M%d", &num_of_lines);
+    if(!is_start_message) {
+        fprintf(stderr, "Expected header but \"%s\"\n", header);
+        exit(1);
+    }
+
+    g_free(header);
+
+    while(num_of_lines--) {
+        gchar *line;
+        g_io_channel_read_line(source, &line, NULL, NULL, NULL);
+        g_string_append(text, line);
+        g_free(line);
+    }
+
+    send_to_skype(text->str);
+    g_string_free(text, TRUE);
     
     return TRUE;
 }
- 
+
 int main(int argc, char **argv) {
     setlocale(LC_ALL, "en_US.utf8");
 
@@ -108,7 +128,6 @@ int main(int argc, char **argv) {
     connection = dbus_bus_get(DBUS_BUS_SESSION, &error);
     if(connection == NULL) {
         fprintf(stderr, "Failed to open connection to bus: %s\n", error.message);
-        dbus_error_free(&error);
         exit(1);
     }
     

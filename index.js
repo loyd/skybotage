@@ -25,7 +25,7 @@ fs.readdir('./tasks', function(err, files) {
     });
 });
 
-var commandReg = /^!(.*?)\s*(?:\s+(.*))?$/;
+var commandReg = /^!(.*?)\s*(?:\s+([\s\S]*))?$/;
 skype.on('message', function(chat, message) {
     var parts = message.match(commandReg);
     if(!(parts && parts[1] in tasks)) return;

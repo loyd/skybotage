@@ -1,7 +1,7 @@
 "use strict";
 
 var botName  = 'skybotage'
-  , protocol = 8
+  , protocol = 8;
 
 var spawn = require('child_process').spawn
   , path  = require('path')
@@ -62,12 +62,14 @@ function notify(body) {
 
 function invoke(cmd /*, ...*/) {
     console.assert(cmd);
-    dbus.stdin.write(fmt.apply(null, arguments) + '\n');
+    var message = fmt.apply(null, arguments) + '\n'
+      , numOfLines = message.match(newLineReg).length;
+
+    var result = 'M' + numOfLines + '\n' + message;
+    dbus.stdin.write(result);
 }
 
 skype.send = function(chat, message) {
     console.assert(chat && message);
-    var lines = message.split('\n');
-    for(var i = 0, len = lines.length; i < len; ++i)
-        invoke('CHATMESSAGE %s %s', chat, lines[i]);
+    invoke('CHATMESSAGE %s %s', chat, message);
 }
