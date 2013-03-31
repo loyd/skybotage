@@ -1,7 +1,7 @@
 {
 	"name"        : "skybotage",
 	"description" : "Modular Skype bot",
-	"version"     : "0.1.0",
+	"version"     : "0.1.5",
 	"keywords"    : ["Skype", "bot", "dbus"],
 
 	"engines" : {
