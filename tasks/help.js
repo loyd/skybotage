@@ -42,12 +42,13 @@ function generateHelp(lang, cmd) {
 
     if(cmd) {
         var info = commands[cmd] && commands[cmd][lang];
-        return info ? [format(info)] : null;
+        return info ? format(info) : null;
     } else {
         return infos
             .map(function(info) { return info[lang] })
             .filter(function(member) { return member })
-            .map(format);
+            .map(format)
+            .join('\n');
     }
 }
 
@@ -60,5 +61,5 @@ exports.execute = function(input, answer) {
     }
 
     var help = generateHelp(lang, input.body);
-    if(help) help.forEach(answer);
+    if(help) answer(help);
 };
