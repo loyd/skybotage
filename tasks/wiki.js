@@ -1,4 +1,6 @@
-var COMMON_API_URL = 'wikipedia.org/w/api.php';
+var COMMON_API_URL = 'wikipedia.org/w/api.php'
+  , DESC_LENGTH    = 300;
+
 var request = require('request');
 
 exports.info = {
@@ -31,6 +33,7 @@ function search(lang, body, done) {
     });
 }
 
+var coordsReg = /^(?:Coordinates|Координаты):.*?\n{2}/;
 function queryIntro(lang, title, done) {
     request({
           url : 'http://' + lang + '.' + COMMON_API_URL
@@ -42,9 +45,9 @@ function queryIntro(lang, title, done) {
             , titles : title
             , exlimit : 1
             , exintro : ''
+            , exchars : DESC_LENGTH
             , redirects : ''
             , explaintext : ''
-            , exsentences : 3
             , exsectionformat : 'raw'
         }
     }, function(err, res, body) {
@@ -54,7 +57,7 @@ function queryIntro(lang, title, done) {
               , pageId  = Object.keys(pages)[0]
               , content = pages[pageId].extract;
 
-            done(content);
+            done(content.replace(coordsReg, ''));
         } catch(err) {
             console.error(err);
         }
