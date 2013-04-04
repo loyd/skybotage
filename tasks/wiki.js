@@ -51,7 +51,9 @@ function queryIntro(lang, title, done) {
             , exsectionformat : 'raw'
         }
     }, function(err, res, body) {
-        if(err) console.error(err);
+        if(err || res.statusCode !== 200)
+            return console.error(err || 'Status code: ' + res.statusCode);
+
         try {
             var pages   = body.query.pages
               , pageId  = Object.keys(pages)[0]

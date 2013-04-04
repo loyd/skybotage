@@ -26,7 +26,7 @@ exports.execute = function(data, answer) {
         , json : true
     }, function(err, res, body) {
         if(err || res.statusCode !== 200)
-            console.error(err || 'Status code: ' + res.statusCode);
+            return console.error(err || 'Status code: ' + res.statusCode);
 
         var text   = body.text.replace(sym151, '&#8212;')
           , result = mnem.decode(text);

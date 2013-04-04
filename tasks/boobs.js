@@ -19,7 +19,7 @@ exports.info = {
 exports.execute = function(data, answer) {
     request({ url : urlNoise, json : true }, function(err, res, body) {
         if(err || res.statusCode !== 200)
-            console.error(err || 'Status code: ' + res.statusCode);
+            return console.error(err || 'Status code: ' + res.statusCode);
 
         var result = body[0].preview;
         answer(urlImage + result);

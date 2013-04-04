@@ -28,7 +28,7 @@ var fromBashIm = (function(store, url) {
 
         request({ url : url, encoding : null }, function(err, res, body) {
             if(err || res.statusCode !== 200)
-                console.error(err || 'Status code: ' + res.statusCode);
+                return console.error(err || 'Status code: ' + res.statusCode);
 
             var data = iconv.decode(body, 'win1251').trim();
             while(match = contentReg.exec(data))
@@ -50,7 +50,7 @@ var fromBashOrg = (function(store, url) {
 
         request(url, function(err, res, body) {
             if(err || res.statusCode !== 200)
-                console.error(err || 'Status code: ' + res.statusCode);
+                return console.error(err || 'Status code: ' + res.statusCode);
 
             while(match = contentReg.exec(body))
                 store.push(mnem.decode(match[1]
