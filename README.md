@@ -30,6 +30,7 @@ exports.info = {
  * @param {Object} input
  * @param {String} input.body
  * @param {String} input.command
+ * @param {String} input.chat
  * @param {Function} answer(message)
  */
 exports.execute = function(input, answer) {

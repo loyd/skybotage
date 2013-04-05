@@ -33,6 +33,7 @@ skype.on('message', function(chat, message) {
     var params = {
           command : parts[1]
         , body : parts[2]
+        , chat : chat
     };
 
     var answer = skype.send.bind(skype, chat);
