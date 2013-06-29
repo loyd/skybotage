@@ -1,3 +1,5 @@
+"use strict";
+
 var request = require('request')
   , mnem = require('../libs/mnemonic')
   , url  = 'http://fucking-great-advice.ru/';

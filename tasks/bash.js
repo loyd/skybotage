@@ -1,3 +1,5 @@
+"use strict";
+
 var BASH_IM_URL  = 'http://bash.im/random'
   , BASH_ORG_URL = 'http://www.bash.org/?random';
 

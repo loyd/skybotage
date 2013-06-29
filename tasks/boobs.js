@@ -1,3 +1,5 @@
+"use strict";
+
 var request  = require('request')
   , urlNoise = 'http://api.oboobs.ru/noise/'
   , urlImage = 'http://media.oboobs.ru/';

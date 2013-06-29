@@ -1,3 +1,5 @@
+"use strict";
+
 var COMMON_API_URL = 'wikipedia.org/w/api.php'
   , DESC_LENGTH    = 300;
 

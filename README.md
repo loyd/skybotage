@@ -17,6 +17,8 @@ Task format
 -------------
 
 ```javascript
+"use strict";
+
 exports.info = {
     en : {
           command : 'fga'

@@ -1,3 +1,5 @@
+"use strict";
+
 var WAITING_TIME = 2 * 3600 * 1000; // [ms]
 
 var spawn = require('child_process').spawn

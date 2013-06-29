@@ -5,6 +5,7 @@
  *   - format messages:
  *     M<number of lines>
  *     <multiline message>
+ *   - update to C99
  */
 
 #define REPLY_TIMEOUT -1
