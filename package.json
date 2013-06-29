@@ -18,6 +18,6 @@
 	"devDependencies" : {},
 
 	"scripts" : {
-		"install" : "./prepare_dbus.sh"
+		"install" : "./prepare_dbus"
 	}
 }

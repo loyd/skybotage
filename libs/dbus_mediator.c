@@ -18,6 +18,7 @@
 
 #define DBUS_API_SUBJECT_TO_CHANGE
 #include <dbus/dbus.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 DBusConnection *connection;
 

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function is_installed {
+    command -v "$0" &> /dev/null
+}
+
+if [ -z "$CC" ]; then
+    if is_installed c99; then
+        CC=c99
+    elif is_installed gcc; then
+        CC='gcc std=c99'
+    elif is_installed clang; then
+        CC=clang
+    else
+        echo 'Please set $CC and restart the script.'
+        exit 1
+    fi
+fi
+
+$CC -D_GNU_SOURCE libs/dbus_mediator.c -o libs/.dbus_mediator \
+    `pkg-config --cflags --libs glib-2.0` \
+    `pkg-config --cflags --libs dbus-glib-1`
