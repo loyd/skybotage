@@ -31,7 +31,7 @@ var next = (function(store) {
                 .slice(start, end)
                 .split('\n')
                 .map(function(tip) {
-                    return tip.replace(/<.*?>/g, '').trim();
+                    return tip.replace(tagReg, '').trim();
                 })
                 .filter(String)
                 .sort(shuffler);
