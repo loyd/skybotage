@@ -10,12 +10,6 @@ exports.info = {
         , signature : '!обс [<тэг>]'
         , description : 'Возвращает случайный совет'
     }
-
-    , en : {
-          command : 'fga'
-        , signature : '!fga [<tag>]'
-        , description : 'Returns random advice'
-    }
 }
 
 var sym151 = /\&#151;/g;
