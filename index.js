@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 
+process.title = 'skybotage';
+
 // Global settings
 require('console-trace')({ always : true });
 console.assert = require('better-assert');
