@@ -30,6 +30,12 @@ static void print_messages(DBusMessageIter *iter) {
         int type = dbus_message_iter_get_arg_type(iter);
         if(type == DBUS_TYPE_STRING) {
             dbus_message_iter_get_basic(iter, &str);
+            int num_of_lines = 1;
+
+            for(int i = 0; str[i]; ++i) if(str[i] == '\n')
+                ++num_of_lines;
+
+            g_print("M%d\n", num_of_lines);
             g_print("%s\n", str);
         } else if(type == DBUS_TYPE_VARIANT) {
             DBusMessageIter subiter;

@@ -10,25 +10,46 @@ var spawn = require('child_process').spawn
   , Emitter = require('events').EventEmitter;
 
 var skype = module.exports = new Emitter;
-var tmpData = {};
 
-var regs = {
+var msgTypes = {
       inbox : /^CHATMESSAGE (\d+) STATUS (RECEIVED|SENT)$/
     , info  : /^CHATMESSAGE (\d+) (\w+) ([\s\S]*?)$/
 };
 
-dbus.stdout.on('data', function(body) {
+dbus.stdout.setEncoding('utf8');
+dbus.stdout.on('data', (function() {
+    var headerPat = /^M(\d+)$/;
+    var message, waited;
+
+    return function(body) {
+        console.assert(body[body.length-1] === '\n');
+        body.slice(0, -1).split('\n').forEach(function(line) {
+            if(!waited) {
+                var res = line.match(headerPat);
+                console.assert(res);
+                message = '';
+                waited  = +res[1];
+            } else {
+                message += '\n' + line;
+                if(--waited === 0)
+                    handleMessage(message.trim());
+            }
+        });
+    };
+})());
+
+var tmpData = {};
+function handleMessage(body) {
     console.assert(body);
-    body = body.toString('utf-8').trim();
-    notify(body);
+    console.log(body);
 
     var res;
-    if(res = body.match(regs.inbox)) {
+    if(res = body.match(msgTypes.inbox)) {
         var messageId = +res[1];
 
         invoke('GET CHATMESSAGE %d CHATNAME', messageId);
         invoke('GET CHATMESSAGE %d BODY', messageId);
-    } else if(res = body.match(regs.info)) {
+    } else if(res = body.match(msgTypes.info)) {
         var messageId = +res[1];
         var message = tmpData[messageId] = tmpData[messageId] || {};
         message[res[2].toLowerCase()] = res[3];
@@ -38,32 +59,20 @@ dbus.stdout.on('data', function(body) {
             skype.emit('message', message.chatname, message.body);
         }
     }
-});
+}
 
-dbus.stderr.on('data', function(body) {
-    console.error(body.toString());
-});
-
-dbus.on('close', function(code) {
-    console.log('Code: %d', code);
-});
+dbus.stderr.setEncoding('utf8');
+dbus.stderr.on('data', console.error);
+dbus.on('close', console.info.bind(null, 'Code: %d'));
 
 invoke('NAME %s', botName);
 invoke('PROTOCOL %d', protocol);
 
-var newLineReg = /\n/g;
-function notify(body) {
-    // var time = new Date().toTimeString().slice(0, 8);
-    // Align multiline
-    // body = body.replace(newLineReg, '\n         | ');
-    // console.log('%s | %s', time, body);
-    console.log(body);
-}
-
+var newLinePat = /\n/g;
 function invoke(cmd /*, ...*/) {
     console.assert(cmd);
     var message = fmt.apply(null, arguments) + '\n'
-      , numOfLines = message.match(newLineReg).length;
+      , numOfLines = message.match(newLinePat).length;
 
     var result = 'M' + numOfLines + '\n' + message;
     dbus.stdin.write(result);
